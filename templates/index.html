@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechStore All-in-One</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <h1 onclick="window.location.href='/'">🚀 TechStore</h1>
+        <div class="menu">
+            <a href="/">Loja</a>
+            <a href="/admin_painel">Administração</a>
+            <a href="/carrinho_painel" class="cart-link">🛒 Carrinho ({{ session['carrinho']|length if
+                session['carrinho'] else 0 }})</a>
+        </div>
+    </nav>
+
+    <div class="container">
+
+        {% if view == 'loja' %}
+        <section id="vitrine">
+            <h2>Nossos Produtos</h2>
+            <div class="grid">
+                {% for p in produtos %}
+                <div class="card">
+                    <div class="card-img">📦</div>
+                    <h3>{{ p.nome }}</h3>
+                    <p class="preco">R$ {{ "%.2f"|format(p.preco) }}</p>
+                    <a href="/add/{{ p.id }}" class="btn-buy">Adicionar ao Carrinho</a>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        {% elif view == 'admin' %}
+        <section id="admin">
+            <h2>Cadastrar Novo Produto</h2>
+            <form action="/cadastrar" method="POST" class="form-admin">
+                <input type="text" name="nome" placeholder="Nome do Produto" required>
+                <input type="number" step="0.01" name="preco" placeholder="Preço R$" required>
+                <button type="submit">Salvar Produto</button>
+            </form>
+            <h3>Estoque Atual</h3>
+            <table>
+                <tr>
+                    <th>ID</th>
+                    <th>Nome</th>
+                    <th>Preço</th>
+                </tr>
+                {% for p in produtos %}
+                <tr>
+                    <td>{{ p.id }}</td>
+                    <td>{{ p.nome }}</td>
+                    <td>R$ {{ p.preco }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </section>
+
+        {% elif view == 'carrinho' %}
+        <section id="carrinho">
+            <h2>Seu Carrinho</h2>
+            <ul>
+                {% for item in itens %}
+                <li>{{ item.nome }} - <strong>R$ {{ item.preco }}</strong></li>
+                {% endfor %}
+            </ul>
+            <div class="total">
+                <h3>Total: R$ {{ "%.2f"|format(total) }}</h3>
+                <a href="/limpar" class="btn-clear">Evaziar Carrinho</a>
+                <button class="btn-buy" onclick="finalizar()">Finalizar Compra</button>
+            </div>
+        </section>
+        {% endif %}
+
+    </div>
+
+    <script>
+        function finalizar() {
+            alert("Obrigado pela compra! (Integração de pagamento pendente)");
+        }
+    </script>
+</body>
+
+</html>
