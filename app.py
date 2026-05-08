@@ -24,7 +24,7 @@ def vitrine():
     conn = get_db_connection()
     produtos = conn.execute('SELECT * FROM produtos').fetchall()
     conn.close()
-    return render_template('loja.html', produtos=produtos)
+    return render_template('index.html', view='loja', produtos=produtos)
 
 @app.route('/adicionar_carrinho/<int:id>')
 def adicionar_carrinho(id):
@@ -36,8 +36,8 @@ def adicionar_carrinho(id):
     session['carrinho'] = carrinho
     return redirect(url_for('vitrine'))
 
-@app.route('/carrinho')
-def ver_carrinho():
+@app.route('/carrinho_painel')
+def carrinho_painel():
     carrinho_ids = session.get('carrinho', [])
     conn = get_db_connection()
     itens = []
@@ -48,15 +48,16 @@ def ver_carrinho():
             itens.append(item)
             total += item['preco']
     conn.close()
-    return render_template('carrinho.html', itens=itens, total=total)
+    return render_template('index.html', view='carrinho', itens=itens, total=total)
+
 
 # --- ROTAS DO ADMINISTRADOR (CADASTRO) ---
-@app.route('/admin')
-def admin():
+@app.route('/admin_painel')
+def admin_painel():
     conn = get_db_connection()
     produtos = conn.execute('SELECT * FROM produtos').fetchall()
     conn.close()
-    return render_template('admin.html', produtos=produtos)
+    return render_template('index.html', view='admin', produtos=produtos)
 
 @app.route('/admin/add', methods=['POST'])
 def admin_add():
